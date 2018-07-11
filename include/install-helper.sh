@@ -1,5 +1,27 @@
 #!/bin/bash
 
+useswap="no"
+
+# swap on
+a3pk_swap_on () {
+  print_progress "mount swap"
+  useswap="yes"
+  echo "Create swap"
+  dd if=/dev/zero of=tmp-swap bs=1024 count=2048000
+  mkswap tmp-swap
+  chmod 600 tmp-swap
+  /sbin/swapon tmp-swap
+}
+
+# 关闭 swap
+a3pk_swap_off () {
+  print_progress "unmount swap"
+  /sbin/swapoff tmp-swap
+  rm -rf tmp-swap
+}
+
+
+
 # 检查上一条命令执行结果， 如果失败则输出错误消息
 # $1 string 失败消息内容
 assert_command_result () {
