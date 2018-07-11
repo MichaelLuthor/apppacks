@@ -54,17 +54,27 @@ assert_command_result "mariadb make install failed"
 a3pk_swap_off
 
 print_progress "setup mariadb"
+cp my.cnf /etc/my.cnf
 "$install_path/scripts/mysql_install_db" \
   --user=mysql \
   --datadir="$install_path/data/" \
   --basedir=$install_path
 
-print_progress "start mariadb server"
-"$install_path/bin/mysqld_safe" \
-  --datadir="$install_path/data/" \
-  --user=root \
-  &
+print_progress "install service"
+cp $install_path/support-files/mysql.server /etc/rc.d/init.d/mysqld
+chmod +x /etc/rc.d/init.d/mysqld
+service mysqld start
+assert_command_result "start service failed"
 
 print_progress "init mariadb"
 "$install_path/bin/mysql_secure_installation"
 
+echo ""
+echo ""
+echo "=========================================================="
+echo "= "
+echo "= Install Path : $install_path"
+echo "= Start Service : service mysqld start"
+echo "= Configuration Path : /etc/my.cnf"
+echo "= "
+echo "=========================================================="
