@@ -19,7 +19,6 @@ groupadd -r mysql
 useradd -r -g mysql -s /sbin/nologin -d $install_path -M mysql
 chown -R mysql:mysql $install_path
 
-if [ "abc" != "abc" ]; then # 临时注释掉
 print_progress "install requirements"
 yum install -y cmake
 yum install -y ncurses-devel
@@ -51,7 +50,6 @@ assert_command_result "mariadb make install failed"
 cd ..
 
 a3pk_swap_off
-fi # 临时注释掉
 
 print_progress "setup mariadb"
 cp my.cnf /etc/my.cnf
