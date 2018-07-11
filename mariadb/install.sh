@@ -14,14 +14,13 @@ print_progress "create user for mysql"
 mkdir -p $install_path
 mkdir -p $install_path/data/mysql
 mkdir -p /var/log/mariadb
-chown mysql:mysql -R /var/log/mariadb/
-
 mkdir -p /var/run/mariadb
-chown -R mysql:mysql /var/run/mariadb/
 
 groupadd -r mysql
 useradd -r -g mysql -s /sbin/nologin -d $install_path -M mysql
 chown -R mysql:mysql $install_path/data/mysql
+chown -R mysql:mysql /var/log/mariadb/
+chown -R mysql:mysql /var/run/mariadb/
 
 print_progress "install requirements"
 yum install -y cmake
