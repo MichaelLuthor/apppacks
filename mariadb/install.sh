@@ -32,6 +32,7 @@ print_progress "prepar mariadb"
 cmake . \
  -DCMAKE_INSTALL_PREFIX="$install_path" \
  -DMYSQL_DATADIR="$install_path/data/mysql" \
+ -DMYSQL_UNIX_ADDR=/var/lib/mysql/mysql.sock \
  -DWITHOUT_TOKUDB=1 \
  -DWITH_INNOBASE_STORAGE_ENGINE=1 \
  -DWITH_ARCHIVE_STPRAGE_ENGINE=1 \
