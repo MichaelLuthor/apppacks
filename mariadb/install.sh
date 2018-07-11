@@ -13,15 +13,13 @@ fi
 print_progress "create user for mysql"
 mkdir -p $install_path
 mkdir -p $install_path/data/mysql
-mkdir -p /var/log/mariadb
-mkdir -p /var/run/mariadb
+mkdir -p $install_path/log
 
 groupadd -r mysql
 useradd -r -g mysql -s /sbin/nologin -d $install_path -M mysql
-chown -R mysql:mysql $install_path/data/mysql
-chown -R mysql:mysql /var/log/mariadb/
-chown -R mysql:mysql /var/run/mariadb/
+chown -R mysql:mysql $install_path
 
+if [ "abc" != "abc" ]; then # 临时注释掉
 print_progress "install requirements"
 yum install -y cmake
 yum install -y ncurses-devel
@@ -50,8 +48,10 @@ assert_command_result "mariadb make failed"
 
 make install
 assert_command_result "mariadb make install failed"
+cd ..
 
 a3pk_swap_off
+fi # 临时注释掉
 
 print_progress "setup mariadb"
 cp my.cnf /etc/my.cnf
@@ -61,20 +61,20 @@ cp my.cnf /etc/my.cnf
   --basedir=$install_path
 
 print_progress "install service"
-cp $install_path/support-files/mysql.server /etc/rc.d/init.d/mysqld
-chmod +x /etc/rc.d/init.d/mysqld
-service mysqld start
+$install_path/bin/mysqld_safe &
 assert_command_result "start service failed"
+sleep 3
 
 print_progress "init mariadb"
-"$install_path/bin/mysql_secure_installation"
+$install_path/bin/mysql_secure_installation \
+  --socket=$install_path/mysql.sock
 
 echo ""
 echo ""
 echo "=========================================================="
 echo "= "
 echo "= Install Path : $install_path"
-echo "= Start Service : service mysqld start"
+echo "= Start Service : $install_path/bin/mysqld_safe &"
 echo "= Configuration Path : /etc/my.cnf"
 echo "= "
 echo "=========================================================="
