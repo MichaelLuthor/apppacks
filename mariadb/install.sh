@@ -13,6 +13,12 @@ fi
 print_progress "create user for mysql"
 mkdir -p $install_path
 mkdir -p $install_path/data/mysql
+mkdir -p /var/log/mariadb
+chown mysql:mysql -R /var/log/mariadb/
+
+mkdir -p /var/run/mariadb
+chown -R mysql:mysql /var/run/mariadb/
+
 groupadd -r mysql
 useradd -r -g mysql -s /sbin/nologin -d $install_path -M mysql
 chown -R mysql:mysql $install_path/data/mysql
@@ -35,7 +41,6 @@ cmake . \
  -DWIYH_SSL=system \
  -DVITH_ZLIB=system \
  -DWITH_LOBWRAP=0 \
- -DMYSQL_UNIX_ADDR="$install_path/mysql.sock" \
  -DDEFAULT_CHARSET=utf8 \
  -DDEFAULT_COLLATION=utf8_general_ci
 assert_command_result "mariadb cmake failed"
@@ -55,7 +60,10 @@ print_progress "setup mariadb"
   --basedir=$install_path
 
 print_progress "start mariadb server"
-"$install_path/bin/mysqld_safe" --datadir="$install_path/data/"
+"$install_path/bin/mysqld_safe" \
+  --datadir="$install_path/data/" \
+  --user=root \
+  &
 
 print_progress "init mariadb"
 "$install_path/bin/mysql_secure_installation"
